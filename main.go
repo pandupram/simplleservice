@@ -59,14 +59,22 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 		sum += num
 	}
 
-	// Convert sum to JSON integer
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(sum); err != nil {
-		log.Printf("Error encoding response: %v", err)
+	// Convert sum to JSON
+	sumJSON, err := json.Marshal(sum)
+	if err != nil {
+		log.Printf("Error marshalling sum to JSON: %v", err)
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
-	log.Println(sum)
+
+	// Write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(sumJSON); err != nil {
+		log.Printf("Error writing response: %v", err)
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {
