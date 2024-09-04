@@ -30,27 +30,26 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var sum int32
+	var sum int64 // Use int64 to handle larger sums
 	for _, item := range input {
-		var num int32
+		var num int64
 		switch v := item.(type) {
-		case int32: // JSON numbers are unmarshalled as float64
-			num = v
+		case float64:
+			// JSON numbers are unmarshalled as float64
+			num = int64(v)
 		case string:
 			// Clean up the string by removing newline characters
-			numStr := strings.ReplaceAll(v, "\\n", "")
-			numStr = strings.TrimSpace(v)
+			numStr := strings.ReplaceAll(v, "\n", "")
+			numStr = strings.TrimSpace(numStr)
 
-			// Konversi string ke integer
-			parsedNum, err := strconv.ParseInt(numStr, 10, 32)
+			// Convert string to integer
+			parsedNum, err := strconv.ParseInt(numStr, 10, 64)
 			if err != nil {
 				log.Printf("Error converting string to int: %v", err)
 				http.Error(w, fmt.Sprintf("Invalid number format: %v", err), http.StatusBadRequest)
 				return
 			}
-			num = int32(parsedNum)
-		case float64: // JSON numbers are unmarshalled as float64
-			num = int32(v)
+			num = parsedNum
 		default:
 			log.Printf("Unsupported data type: %T", v)
 			http.Error(w, "Unsupported data type in input", http.StatusBadRequest)
@@ -59,8 +58,11 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 		sum += num
 	}
 
+	// Convert sum to string
+	sumStr := strconv.FormatInt(sum, 10)
+
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(sum); err != nil {
+	if err := json.NewEncoder(w).Encode(sumStr); err != nil {
 		log.Printf("Error encoding response: %v", err)
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
