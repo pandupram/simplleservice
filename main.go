@@ -38,9 +38,10 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 			// JSON numbers are unmarshalled as float64
 			num = int64(v)
 		case string:
-			// Clean up the string by removing newline characters
-			numStr := strings.ReplaceAll(v, "\n", "")
-			numStr = strings.TrimSpace(numStr)
+			// Clean up the string by removing unwanted characters
+			numStr := strings.TrimSpace(v)
+			numStr = strings.ReplaceAll(numStr, "\n", "")
+			numStr = strings.ReplaceAll(numStr, "\"", "")
 
 			// Convert string to integer
 			parsedNum, err := strconv.ParseInt(numStr, 10, 64)
@@ -65,6 +66,7 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
+	log.Println(sum)
 }
 
 func main() {
