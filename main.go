@@ -49,6 +49,8 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			num = int32(parsedNum)
+		case float64: // JSON numbers are unmarshalled as float64
+			num = int32(v)
 		default:
 			log.Printf("Unsupported data type: %T", v)
 			http.Error(w, "Unsupported data type in input", http.StatusBadRequest)
