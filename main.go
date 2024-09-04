@@ -9,7 +9,7 @@ import (
 
 // sumNumbers menangani permintaan POST ke endpoint /sum
 func sumNumbers(w http.ResponseWriter, r *http.Request) {
-	var numbers []int32 // Gunakan slice string untuk mendecode body
+	var numbers []string // Gunakan slice string untuk mendecode body
 
 	err := json.NewDecoder(r.Body).Decode(&numbers)
 	if err != nil {
@@ -20,10 +20,10 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var sum int32
-	for _, numStr := range numbers {
-		// Tambah ke total
-		sum += numStr
-	}
+	// for _, numStr := range numbers {
+	// 	// Tambah ke total
+
+	// }
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(sum); err != nil {
