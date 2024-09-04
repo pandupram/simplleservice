@@ -58,11 +58,9 @@ func sumNumbers(w http.ResponseWriter, r *http.Request) {
 		sum += num
 	}
 
-	// Convert sum to string
-	sumStr := strconv.FormatInt(sum, 10)
-
+	// Convert sum to JSON integer
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(sumStr); err != nil {
+	if err := json.NewEncoder(w).Encode(sum); err != nil {
 		log.Printf("Error encoding response: %v", err)
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
